@@ -1,0 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+namespace ConsoleApplication2
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            StreamReader stream = new StreamReader("text.txt");
+            
+            string[] sentences = stream.ReadToEnd().Split(new Char[]{'!','?','.'}, StringSplitOptions.RemoveEmptyEntries);
+
+            int[] coutSymbol = new int[sentences.Length];
+            for (int i = 0; i < sentences.Length; i++)
+                coutSymbol[i] = sentences[i].Split(',').Length - 1;
+
+            int maxSymbol = coutSymbol.Max();
+
+            for (int i = 0; i < sentences.Length; i++)
+                if (coutSymbol[i] == maxSymbol)
+                    Console.Write(sentences[i]);
+
+            Console.ReadKey();
+        }
+    }
+}
