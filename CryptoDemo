@@ -1,0 +1,103 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Crypto
+{    
+    public interface ICrypto
+    {
+        void Transform();
+        string CryptText { get; }
+        string NewOpenText { set; }
+    }
+ 
+    public enum Direction
+    {
+        CRYPT, DECRYPT
+    }
+
+    public class XorCrypto : ICrypto
+    {
+        private string openText;
+        private string cryptText;        
+        private int key;
+
+        public XorCrypto(string openText, int key)
+        {           
+            this.openText = openText;
+            this.cryptText = "";            
+            this.key = key;
+        }
+
+        public void Transform()
+        {
+            if (openText == null)
+                throw new NullReferenceException("Null reference on open text");
+
+            cryptText = "";
+            for (int i = 0; i < openText.Length; i++)
+                cryptText += (char)(openText[i] ^ key);
+        }
+
+        public string NewOpenText
+        {
+            set { openText = value; }
+        }
+
+        public string CryptText
+        {
+            get { return cryptText; }
+        }
+    }
+
+    public class Ceasar : ICrypto
+    {
+        private string openText;
+        private string cryptText;
+        private Direction direct;
+        private int key;
+
+        public Ceasar(string openText, int key, Direction direct)
+        {           
+            this.openText = openText;
+            this.cryptText = "";
+            this.direct = direct;
+            this.key = key;
+        }
+
+        public void Transform()
+        {
+            if (openText == null)
+                throw new NullReferenceException("Null reference on open text");
+
+            cryptText = "";
+            for (int i = 0; i < openText.Length; i++)
+            {
+                switch (direct) {
+                    case Direction.CRYPT: 
+                        cryptText += (char)((openText[i] + key) % 65536);
+                        break;
+                    case Direction.DECRYPT:
+                        cryptText += (char)((openText[i] - key) % 65536);
+                        break;
+                }
+            }
+        }
+
+        public Direction NewDirection
+        {
+            set { direct = value; }
+        }
+
+        public string NewOpenText
+        {
+            set { openText = value; }
+        }
+
+        public string CryptText
+        {
+            get { return cryptText; }
+        }
+    }
+}
